@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -22,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private float coyoteCounter;
     private float jumpBufferCounter;
     private float jumpGraceCounter;
+    
 
 
     private enum MovementState { Idle, Running, Jumping, Falling }
@@ -43,6 +45,8 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector2(dirX * moveSpeed, rb.velocity.y);
 
         jumpGraceCounter -= Time.deltaTime;
+
+        var jumpInputReleased = Input.GetButtonUp("Jump");
 
         if (IsGrounded())
         {
@@ -70,6 +74,10 @@ public class PlayerMovement : MonoBehaviour
             jumpBufferCounter = 0f;
             jumpGraceCounter = jumpGraceTime;
 
+        }
+        if (jumpInputReleased && rb.velocity.y>0) 
+        {
+            rb.velocity = new Vector2(rb.velocity.x, y: 0f);
         }
     
        
@@ -109,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
     private bool IsGrounded()
     {
         Vector2 boxSize = new Vector2(0.60f, 1.12f); // half the size of the collider
-        RaycastHit2D hit = Physics2D.BoxCast(coll.bounds.center, boxSize, 0f, Vector2.down, 0.2f, jumpableGround);
+        RaycastHit2D hit = Physics2D.BoxCast(coll.bounds.center, boxSize, 0f, Vector2.down, .1f, jumpableGround);
         return hit.collider != null;
         
     }
