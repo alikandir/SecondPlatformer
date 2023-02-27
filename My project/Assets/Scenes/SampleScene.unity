@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 69257593}
   m_Layer: 0
   m_Name: Mr.Fox
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -224,8 +224,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0048334897, y: -0.39880204}
-  m_Size: {x: 0.6574947, y: 1.1042173}
+  m_Offset: {x: -0.0048334897, y: -0.38740337}
+  m_Size: {x: 0.6574947, y: 1.1270146}
   m_Direction: 0
 --- !u!50 &69257591
 Rigidbody2D:
@@ -263,9 +263,11 @@ MonoBehaviour:
   jumpableGround:
     serializedVersion: 2
     m_Bits: 8
-  coyoteTime: 0.2
   moveSpeed: 7
   jumpForce: 20
+  coyoteTime: 0.2
+  jumpBufferTime: 0.2
+  jumpGraceTime: 0.3
 --- !u!95 &69257593
 Animator:
   serializedVersion: 5
