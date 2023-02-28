@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumpForce = 14f;
     [SerializeField] private float coyoteTime = 0.2f;
-    [SerializeField] private float jumpBufferTime = 0.2f;
+    [SerializeField] private float jumpBufferTime = 0.001f;
     [SerializeField] private float jumpGraceTime = 0.1f; // jumpCooldown
 
 
@@ -58,20 +58,11 @@ public class PlayerMovement : MonoBehaviour
             coyoteCounter -= Time.deltaTime;
         }
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            jumpBufferCounter = jumpBufferTime;
-
-        }
-        else
-        {
-            jumpBufferCounter -= Time.deltaTime;
-        }
-        if (jumpBufferCounter > 0f && coyoteCounter > 0f && jumpGraceCounter <= 0f)
+        if (Input.GetButtonDown("Jump") && coyoteCounter > 0f && jumpGraceCounter <= 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             coyoteCounter = 0f;
-            jumpBufferCounter = 0f;
+           
             jumpGraceCounter = jumpGraceTime;
 
         }
@@ -116,10 +107,23 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool IsGrounded()
     {
-        Vector2 boxSize = new Vector2(0.60f, 1.12f); // half the size of the collider
-        RaycastHit2D hit = Physics2D.BoxCast(coll.bounds.center, boxSize, 0f, Vector2.down, .1f, jumpableGround);
+        Vector2 boxSize = new Vector2(0.60f, 0.6f);
+        Vector2 origin = new Vector2(coll.bounds.center.x, coll.bounds.min.y - 0.3f);
+        RaycastHit2D hit = Physics2D.BoxCast(origin, boxSize, 0f, Vector2.down, coll.bounds.extents.y, jumpableGround);
+       
+
+        if (hit.collider != null)
+        {
+            Debug.DrawRay(origin, Vector2.down, Color.green);
+                    }
+        else
+        {
+
+            Debug.DrawRay(origin, Vector2.down, Color.red);
+            Debug.Log(hit.collider);
+        }
+       
         return hit.collider != null;
-        
     }
 
 
