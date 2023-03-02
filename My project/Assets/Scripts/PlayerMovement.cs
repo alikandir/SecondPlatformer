@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumpForce = 14f;
     [SerializeField] private float coyoteTime = 0.2f;
-    [SerializeField] private float jumpBufferTime = 0.001f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
     [SerializeField] private float jumpGraceTime = 0.1f; // jumpCooldown
 
 
@@ -23,10 +23,10 @@ public class PlayerMovement : MonoBehaviour
     private float coyoteCounter;
     private float jumpBufferCounter;
     private float jumpGraceCounter;
-    
 
 
-    private enum MovementState { Idle, Running, Jumping, Falling }
+
+    private enum MovementState { Idle, Running, Jumping, Falling , Climbing}
 
     // Start is called before the first frame update
     void Start()
@@ -51,27 +51,35 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded())
         {
             coyoteCounter = coyoteTime;
-
         }
         else
         {
             coyoteCounter -= Time.deltaTime;
         }
-
-        if (Input.GetButtonDown("Jump") && coyoteCounter > 0f && jumpGraceCounter <= 0f)
+        
+        if (Input.GetButtonDown("Jump"))
+        {
+           jumpBufferCounter = jumpBufferTime;
+        }
+        else
+        {
+           jumpBufferCounter -= Time.deltaTime;
+        }
+        if (jumpBufferCounter > 0f && coyoteCounter > 0f && jumpGraceCounter <= 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             coyoteCounter = 0f;
-           
+
             jumpGraceCounter = jumpGraceTime;
+            jumpBufferCounter = 0f;
 
         }
-        if (jumpInputReleased && rb.velocity.y>0) 
+        if (jumpInputReleased && rb.velocity.y > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, y: 0f);
         }
-    
-       
+
+
 
         UpdateAnimationState();
     }
@@ -102,29 +110,21 @@ public class PlayerMovement : MonoBehaviour
         {
             state = MovementState.Falling;
         }
-
+        
         anim.SetInteger("state", (int)state);
     }
     private bool IsGrounded()
     {
-        Vector2 boxSize = new Vector2(0.60f, 0.6f);
-        Vector2 origin = new Vector2(coll.bounds.center.x, coll.bounds.min.y - 0.3f);
-        RaycastHit2D hit = Physics2D.BoxCast(origin, boxSize, 0f, Vector2.down, coll.bounds.extents.y, jumpableGround);
-       
-
-        if (hit.collider != null)
-        {
-            Debug.DrawRay(origin, Vector2.down, Color.green);
-                    }
-        else
         {
 
-            Debug.DrawRay(origin, Vector2.down, Color.red);
-            Debug.Log(hit.collider);
+            Vector2 boxSize = new Vector2(0.60f, 0.000100000001152f);
+            Vector2 origin = new Vector2(coll.bounds.center.x, coll.bounds.min.y);
+            RaycastHit2D hit = Physics2D.BoxCast(origin, boxSize, 0f, Vector2.down, 0f, jumpableGround);
+
+            return hit.collider != null;
         }
-       
-        return hit.collider != null;
+
+
     }
-
-
+    
 }
